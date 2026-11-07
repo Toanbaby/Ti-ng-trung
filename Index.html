@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinese Vocabulary Battle - Thi Đua Từ Vựng Tiếng Trung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        .chinese-font {
+            font-family: 'Ma Shan Zheng', cursive, sans-serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(99, 102, 241, 0.8); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="w-full py-4 px-6 bg-slate-900/60 backdrop-blur-md border-b border-slate-800 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="returnToHome()">
+            <div class="bg-gradient-to-tr from-rose-500 to-indigo-600 p-2.5 rounded-xl shadow-lg">
+                <i class="fa-solid fa-graduation-cap text-xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-wide bg-gradient-to-r from-rose-400 to-indigo-300 bg-clip-text text-transparent">中文对决</h1>
+                <p class="text-xs text-slate-400 font-medium">Chinese Vocab Battle Arena (Lessons 4-6)</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button onclick="openWordListModal()" class="px-3.5 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium border border-slate-700 transition flex items-center space-x-2">
+                <i class="fa-solid fa-book-open text-indigo-400"></i>
+                <span class="hidden sm:inline">Từ điển / Thêm từ</span>
+            </button>
+            <button onclick="openStatsModal()" class="px-3.5 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-medium border border-slate-700 transition flex items-center space-x-2">
+                <i class="fa-solid fa-trophy text-amber-400"></i>
+                <span class="hidden sm:inline">Lịch sử & Đấu trường</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 w-full max-w-5xl mx-auto">
+
+        <!-- SCREEN 1: Setup Players & Mode -->
+        <div id="screen-setup" class="w-full bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8 animate-fadeIn">
+            <div class="text-center space-y-2">
+                <span class="px-3 py-1 bg-indigo-500/10 text-indigo-400 text-xs font-semibold rounded-full border border-indigo-500/20">Chế độ Đối Kháng 2 Người (Bài 4 - Bài 6)</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Sẵn Sàng Ganh Đua?</h2>
+                <p class="text-slate-400 text-sm sm:text-base">Nhập tên 2 đấu thủ và chọn thể thức thi đấu từ vựng Tiếng Trung Hán Ngữ Quyển 1.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Player 1 -->
+                <div class="bg-slate-800/50 border border-indigo-500/30 rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-indigo-600/30">1</div>
+                        <div>
+                            <h3 class="font-bold text-lg text-indigo-300">Đấu thủ số 1</h3>
+                            <p class="text-xs text-slate-400">Người chơi bên trái</p>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Tên hiển thị</label>
+                        <input type="text" id="p1-name" value="玩家一 (Player 1)" class="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                </div>
+
+                <!-- Player 2 -->
+                <div class="bg-slate-800/50 border border-rose-500/30 rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-rose-600 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-rose-600/30">2</div>
+                        <div>
+                            <h3 class="font-bold text-lg text-rose-300">Đấu thủ số 2</h3>
+                            <p class="text-xs text-slate-400">Người chơi bên phải</p>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Tên hiển thị</label>
+                        <input type="text" id="p2-name" value="玩家二 (Player 2)" class="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-rose-500 transition">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Settings -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Thể thức thi đấu</label>
+                    <select id="game-mode" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition">
+                        <option value="turn">Luân Phiên (Turn-based Quiz)</option>
+                        <option value="race">Tốc Độ Đồng Thời (Head-to-Head)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Bộ bài học (Lessons 4-6)</label>
+                    <select id="vocab-level" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition">
+                        <option value="all">Tất cả Bài 4, 5, 6</option>
+                        <option value="lesson4">Bài 4: Bạn đi đâu đấy</option>
+                        <option value="lesson5">Bài 5: Đây là thầy Vương</option>
+                        <option value="lesson6">Bài 6: Tôi học tiếng Trung</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Số câu hỏi</label>
+                    <select id="question-count" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition">
+                        <option value="5">5 câu (Nhanh)</option>
+                        <option value="10" selected>10 câu (Tiêu chuẩn)</option>
+                        <option value="15">15 câu (Thử thách)</option>
+                        <option value="20">20 câu (Đại chiến)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="startGame()" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-rose-600 hover:from-indigo-500 hover:to-rose-500 text-white font-bold rounded-2xl shadow-xl shadow-indigo-600/20 transform hover:-translate-y-0.5 transition duration-200 flex items-center justify-center space-x-3 text-lg">
+                    <i class="fa-solid fa-play text-white"></i>
+                    <span>Bắt Đầu Trận Đấu</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: Turn-Based Quiz Game Arena -->
+        <div id="screen-game-turn" class="w-full hidden space-y-6">
+            <!-- Top Status Bar -->
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex justify-between items-center shadow-lg">
+                <div class="flex items-center space-x-3">
+                    <div id="turn-indicator-badge" class="px-3 py-1 bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs font-bold rounded-lg uppercase tracking-wider">
+                        Lượt của: <span id="current-player-name">Player 1</span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <span class="text-xs text-slate-400">Tiến trình câu hỏi</span>
+                    <div class="text-base font-bold text-white"><span id="current-q-num">1</span> / <span id="total-q-num">10</span></div>
+                </div>
+                <div class="flex space-x-4 text-sm font-semibold">
+                    <div class="text-indigo-400"><span id="p1-score-display">0</span>đ (<span id="p1-label-turn">P1</span>)</div>
+                    <div class="text-slate-600">|</div>
+                    <div class="text-rose-400"><span id="p2-score-display">0</span>đ (<span id="p2-label-turn">P2</span>)</div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8 relative overflow-hidden">
+                <!-- Timer Bar -->
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-slate-800">
+                    <div id="timer-bar" class="h-full bg-gradient-to-r from-indigo-500 to-rose-500 w-full transition-all duration-1000 linear"></div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span id="q-category-tag" class="px-3 py-1 bg-slate-800 text-slate-300 text-xs font-medium rounded-full border border-slate-700">Hán Ngữ Quyển 1</span>
+                    <div class="flex items-center space-x-2 text-slate-400 text-sm">
+                        <i class="fa-regular fa-clock"></i>
+                        <span id="time-left">15</span>s
+                    </div>
+                </div>
+
+                <!-- Hanzi Display & Audio -->
+                <div class="text-center space-y-3 py-4">
+                    <div class="flex items-center justify-center space-x-4">
+                        <h2 id="question-hanzi" class="text-6xl sm:text-7xl font-bold chinese-font text-white tracking-widest drop-shadow-md">明天</h2>
+                        <button onclick="playCurrentAudio()" class="w-12 h-12 bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/40 rounded-2xl flex items-center justify-center transition shadow-md">
+                            <i class="fa-solid fa-volume-high text-lg"></i>
+                        </button>
+                    </div>
+                    <p id="question-pinyin" class="text-indigo-300 text-xl font-medium tracking-wide">míngtiān</p>
+                </div>
+
+                <!-- Multiple Choice Options -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="options-container">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: Simultaneous Race Game Arena -->
+        <div id="screen-game-race" class="w-full hidden space-y-6">
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 flex justify-between items-center shadow-lg">
+                <div class="flex items-center space-x-2">
+                    <span class="px-3 py-1 bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold rounded-lg uppercase tracking-wider">
+                        Đại Chiến Song Đấu Đồng Thời
+                    </span>
+                </div>
+                <div class="text-center font-bold text-white">
+                    Câu <span id="race-current-q">1</span> / <span id="race-total-q">10</span>
+                </div>
+                <div class="text-sm font-semibold text-slate-400">
+                    Thời gian: <span id="race-timer" class="text-amber-400 font-mono text-base">15</span>s
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Player 1 Arena -->
+                <div class="bg-slate-900/80 border-2 border-indigo-500/40 rounded-3xl p-6 shadow-xl space-y-6 flex flex-col justify-between">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <span id="race-p1-name" class="font-bold text-indigo-400 text-lg">Player 1</span>
+                        <div class="text-xl font-extrabold text-white"><span id="race-p1-score">0</span> điểm</div>
+                    </div>
+                    <div class="text-center space-y-2 py-2">
+                        <h2 id="race-p1-hanzi" class="text-5xl font-bold chinese-font text-white">明天</h2>
+                        <p id="race-p1-pinyin" class="text-indigo-300 font-medium">míngtiān</p>
+                    </div>
+                    <div id="race-p1-options" class="grid grid-cols-1 gap-2.5">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Player 2 Arena -->
+                <div class="bg-slate-900/80 border-2 border-rose-500/40 rounded-3xl p-6 shadow-xl space-y-6 flex flex-col justify-between">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <span id="race-p2-name" class="font-bold text-rose-400 text-lg">Player 2</span>
+                        <div class="text-xl font-extrabold text-white"><span id="race-p2-score">0</span> điểm</div>
+                    </div>
+                    <div class="text-center space-y-2 py-2">
+                        <h2 id="race-p2-hanzi" class="text-5xl font-bold chinese-font text-white">明天</h2>
+                        <p id="race-p2-pinyin" class="text-rose-300 font-medium">míngtiān</p>
+                    </div>
+                    <div id="race-p2-options" class="grid grid-cols-1 gap-2.5">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 4: Results & Leaderboard -->
+        <div id="screen-result" class="w-full hidden space-y-8 animate-fadeIn">
+            <div class="bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl text-center space-y-6">
+                <div class="inline-block p-4 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-400 text-4xl shadow-lg mb-2">
+                    <i class="fa-solid fa-crown"></i>
+                </div>
+                <div class="space-y-2">
+                    <span class="px-3 py-1 bg-amber-500/10 text-amber-400 text-xs font-semibold rounded-full border border-amber-500/20">Kết Quả Trận Đấu</span>
+                    <h2 id="winner-announcement" class="text-3xl sm:text-5xl font-black text-white tracking-tight">Player 1 Giành Chiến Thắng!</h2>
+                    <p id="winner-subtitle" class="text-slate-400 text-sm sm:text-base">Trận đại chiến từ vựng Hán Ngữ Quyển 1 đã khép lại cực kỳ gay cấn.</p>
+                </div>
+
+                <!-- Score Summary Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto pt-4">
+                    <div id="res-card-p1" class="bg-slate-800/60 border border-indigo-500/40 rounded-2xl p-5 space-y-3">
+                        <h4 id="res-p1-name" class="font-bold text-indigo-300 text-lg">Player 1</h4>
+                        <div class="text-4xl font-extrabold text-white"><span id="res-p1-score">0</span> <span class="text-sm font-normal text-slate-400">điểm</span></div>
+                        <div class="text-xs text-slate-400 flex justify-between px-4 pt-2 border-t border-slate-700">
+                            <span>Đúng: <strong id="res-p1-correct" class="text-emerald-400">0</strong></span>
+                            <span>Sai: <strong id="res-p1-wrong" class="text-rose-400">0</strong></span>
+                        </div>
+                    </div>
+
+                    <div id="res-card-p2" class="bg-slate-800/60 border border-rose-500/40 rounded-2xl p-5 space-y-3">
+                        <h4 id="res-p2-name" class="font-bold text-rose-300 text-lg">Player 2</h4>
+                        <div class="text-4xl font-extrabold text-white"><span id="res-p2-score">0</span> <span class="text-sm font-normal text-slate-400">điểm</span></div>
+                        <div class="text-xs text-slate-400 flex justify-between px-4 pt-2 border-t border-slate-700">
+                            <span>Đúng: <strong id="res-p2-correct" class="text-emerald-400">0</strong></span>
+                            <span>Sai: <strong id="res-p2-wrong" class="text-rose-400">0</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-6 flex flex-wrap justify-center gap-4">
+                    <button onclick="restartGame()" class="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Đấu Lại Trận Mới</span>
+                    </button>
+                    <button onclick="returnToHome()" class="px-6 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 font-bold rounded-xl transition flex items-center space-x-2">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Về Màn Hình Chính</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL: Word List & Custom Words -->
+    <div id="wordlist-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Kho Từ Vựng Hán Ngữ Quyển 1 (Bài 4 - 6)</h3>
+                    <p class="text-xs text-slate-400">Xem và bổ sung thêm từ vựng mới vào kho dữ liệu</p>
+                </div>
+                <button onclick="closeWordListModal()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto space-y-6 flex-grow">
+                <!-- Add New Word Form -->
+                <div class="bg-slate-800/50 border border-slate-700 rounded-2xl p-4 space-y-4">
+                    <h4 class="font-bold text-sm text-indigo-300"><i class="fa-solid fa-plus-circle mr-1"></i> Thêm từ vựng mới</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <input type="text" id="new-hanzi" placeholder="Hán tự (ví dụ: 明天)" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500">
+                        <input type="text" id="new-pinyin" placeholder="Pinyin (ví dụ: míngtiān)" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500">
+                        <input type="text" id="new-meaning" placeholder="Ý nghĩa (ví dụ: Ngày mai)" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500">
+                        <select id="new-level" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500">
+                            <option value="lesson4">Bài 4</option>
+                            <option value="lesson5">Bài 5</option>
+                            <option value="lesson6">Bài 6</option>
+                        </select>
+                    </div>
+                    <button onclick="addNewWord()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl text-sm transition shadow-md">
+                        Thêm vào danh sách
+                    </button>
+                </div>
+
+                <!-- Word Table -->
+                <div class="border border-slate-800 rounded-2xl overflow-hidden">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-slate-800/80 text-slate-300 border-b border-slate-700">
+                                <th class="p-3">Hán Tự</th>
+                                <th class="p-3">Pinyin</th>
+                                <th class="p-3">Ý Nghĩa</th>
+                                <th class="p-3">Bài học</th>
+                                <th class="p-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vocab-table-body" class="divide-y divide-slate-800">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-800 bg-slate-900/50 flex justify-end">
+                <button onclick="closeWordListModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-semibold transition">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Stats & Leaderboard -->
+    <div id="stats-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <div>
+                    <h3 class="text-xl font-bold text-white"><i class="fa-solid fa-medal text-amber-400 mr-2"></i> Lịch Sử & Bảng Xếp Hạng</h3>
+                    <p class="text-xs text-slate-400">Các trận thư hùng gần đây nhất</p>
+                </div>
+                <button onclick="closeStatsModal()" class="w-10 h-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4 flex-grow" id="history-container">
+                <!-- Populated dynamically -->
+            </div>
+            <div class="p-4 border-t border-slate-800 bg-slate-900/50 flex justify-between items-center">
+                <button onclick="clearHistory()" class="px-4 py-2 bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-semibold transition">Xóa lịch sử</button>
+                <button onclick="closeStatsModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-semibold transition">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-xs text-slate-500 border-t border-slate-800/80">
+        Chinese Vocabulary Battle Arena (Lessons 4-6) &copy; 2026. Luyện từ vựng Hán Ngữ Quyển 1.
+    </footer>
+
+    <!-- Script Application Logic -->
+    <script>
+        // Textbook Lessons 4, 5, 6 Vocabulary Dataset from Hanyu Jiaocheng
+        let defaultVocab = [
+            // Lesson 4
+            { hanzi: "今天", pinyin: "jīntiān", meaning: "Hôm nay", level: "lesson4" },
+            { hanzi: "天", pinyin: "tiān", meaning: "Ngày, trời", level: "lesson4" },
+            { hanzi: "昨天", pinyin: "zuótiān", meaning: "Hôm qua", level: "lesson4" },
+            { hanzi: "星期", pinyin: "xīngqī", meaning: "Tuần lễ", level: "lesson4" },
+            { hanzi: "几", pinyin: "jǐ", meaning: "Mấy, bao nhiêu", level: "lesson4" },
+            { hanzi: "二", pinyin: "èr", meaning: "Số 2", level: "lesson4" },
+            { hanzi: "三", pinyin: "sān", meaning: "Số 3", level: "lesson4" },
+            { hanzi: "四", pinyin: "sì", meaning: "Số 4", level: "lesson4" },
+            { hanzi: "哪儿", pinyin: "nǎr", meaning: "Đâu, ở đâu", level: "lesson4" },
+            { hanzi: "那儿", pinyin: "nàr", meaning: "Đó, ở đó", level: "lesson4" },
+            { hanzi: "我", pinyin: "wǒ", meaning: "Tôi, ta", level: "lesson4" },
+            { hanzi: "回", pinyin: "huí", meaning: "Về, quay lại", level: "lesson4" },
+            { hanzi: "学校", pinyin: "xuéxiào", meaning: "Trường học", level: "lesson4" },
+            { hanzi: "再见", pinyin: "zàijiàn", meaning: "Tạm biệt", level: "lesson4" },
+            { hanzi: "对不起", pinyin: "duìbuqǐ", meaning: "Xin lỗi", level: "lesson4" },
+            { hanzi: "没关系", pinyin: "méi guānxi", meaning: "Không sao, không có chi", level: "lesson4" },
+            { hanzi: "天安门", pinyin: "Tiān'ānmén", meaning: "Thiên An Môn", level: "lesson4" },
+
+            // Lesson 5
+            { hanzi: "这", pinyin: "zhè", meaning: "Này, đây", level: "lesson5" },
+            { hanzi: "是", pinyin: "shì", meaning: "Là, đúng", level: "lesson5" },
+            { hanzi: "老师", pinyin: "lǎoshī", meaning: "Giáo viên", level: "lesson5" },
+            { hanzi: "您", pinyin: "nín", meaning: "Ngài, ông/bà (lịch sự)", level: "lesson5" },
+            { hanzi: "请", pinyin: "qǐng", meaning: "Mời", level: "lesson5" },
+            { hanzi: "进", pinyin: "jìn", meaning: "Vào", level: "lesson5" },
+            { hanzi: "坐", pinyin: "zuò", meaning: "Ngồi", level: "lesson5" },
+            { hanzi: "喝", pinyin: "hē", meaning: "Uống", level: "lesson5" },
+            { hanzi: "茶", pinyin: "chá", meaning: "Trà", level: "lesson5" },
+            { hanzi: "谢谢", pinyin: "xièxie", meaning: "Cảm ơn", level: "lesson5" },
+            { hanzi: "不客气", pinyin: "bú kèqi", meaning: "Đừng khách khí", level: "lesson5" },
+            { hanzi: "工作", pinyin: "gōngzuò", meaning: "Công việc, làm việc", level: "lesson5" },
+            { hanzi: "身体", pinyin: "shēntǐ", meaning: "Sức khỏe, cơ thể", level: "lesson5" },
+            { hanzi: "十", pinyin: "shí", meaning: "Số 10", level: "lesson5" },
+            { hanzi: "日", pinyin: "rì", meaning: "Ngày, mặt trời", level: "lesson5" },
+            { hanzi: "王", pinyin: "Wáng", meaning: "Vương (Họ Vương)", level: "lesson5" },
+
+            // Lesson 6
+            { hanzi: "请问", pinyin: "qǐngwèn", meaning: "Xin hỏi", level: "lesson6" },
+            { hanzi: "贵姓", pinyin: "guìxìng", meaning: "Quý tính (Họ gì)", level: "lesson6" },
+            { hanzi: "姓", pinyin: "xìng", meaning: "Họ", level: "lesson6" },
+            { hanzi: "叫", pinyin: "jiào", meaning: "Gọi là, tên là", level: "lesson6" },
+            { hanzi: "名字", pinyin: "míngzi", meaning: "Tên", level: "lesson6" },
+            { hanzi: "哪", pinyin: "nǎ", meaning: "Nào, quản nào", level: "lesson6" },
+            { hanzi: "国", pinyin: "guó", meaning: "Nước, quốc gia", level: "lesson6" },
+            { hanzi: "中国", pinyin: "Zhōngguó", meaning: "Trung Quốc", level: "lesson6" },
+            { hanzi: "美国", pinyin: "Měiguó", meaning: "Mỹ", level: "lesson6" },
+            { hanzi: "人", pinyin: "rén", meaning: "Người", level: "lesson6" },
+            { hanzi: "学习", pinyin: "xuéxí", meaning: "Học tập", level: "lesson6" },
+            { hanzi: "汉字", pinyin: "Hànzì", meaning: "Hán tự, chữ Hán", level: "lesson6" },
+            { hanzi: "发音", pinyin: "fāyīn", meaning: "Phát âm", level: "lesson6" },
+            { hanzi: "什么", pinyin: "shénme", meaning: "Cái gì, gì", level: "lesson6" },
+            { hanzi: "书", pinyin: "shū", meaning: "Sách", level: "lesson6" },
+            { hanzi: "谁", pinyin: "shéi", meaning: "Ai", level: "lesson6" },
+            { hanzi: "的", pinyin: "de", meaning: "Trợ từ sở hữu (của)", level: "lesson6" },
+            { hanzi: "那", pinyin: "nà", meaning: "Kia, đó", level: "lesson6" },
+            { hanzi: "杂志", pinyin: "zázhì", meaning: "Tạp chí", level: "lesson6" },
+            { hanzi: "中文", pinyin: "Zhōngwén", meaning: "Tiếng Trung", level: "lesson6" },
+            { hanzi: "朋友", pinyin: "péngyou", meaning: "Bạn bè", level: "lesson6" }
+        ];
+
+        let vocabList = JSON.parse(localStorage.getItem('chinese_vocab_custom_456')) || defaultVocab;
+        let matchHistory = JSON.parse(localStorage.getItem('chinese_match_history_456')) || [];
+
+        // Game State Variables
+        let gameState = {
+            p1Name: "Player 1",
+            p2Name: "Player 2",
+            mode: "turn", // 'turn' or 'race'
+            level: "all",
+            totalQ: 10,
+            questions: [],
+            currentQIndex: 0,
+            activeTurnPlayer: 1, // 1 for P1, 2 for P2 (in turn mode)
+            p1Score: 0,
+            p2Score: 0,
+            p1Correct: 0,
+            p1Wrong: 0,
+            p2Correct: 0,
+            p2Wrong: 0,
+            timerInterval: null,
+            timeLeft: 15
+        };
+
+        // Initialize UI on load
+        window.onload = function() {
+            renderVocabTable();
+        };
+
+        function saveCustomVocab() {
+            localStorage.setItem('chinese_vocab_custom_456', JSON.stringify(vocabList));
+        }
+
+        function renderVocabTable() {
+            const tbody = document.getElementById('vocab-table-body');
+            tbody.innerHTML = '';
+            vocabList.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="p-3 font-bold chinese-font text-lg text-indigo-300">${item.hanzi}</td>
+                        <td class="p-3 text-slate-300">${item.pinyin}</td>
+                        <td class="p-3 text-slate-200">${item.meaning}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 bg-slate-800 text-slate-400 rounded text-xs uppercase">${item.level}</span></td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteWord(${index})" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function addNewWord() {
+            const hanzi = document.getElementById('new-hanzi').value.trim();
+            const pinyin = document.getElementById('new-pinyin').value.trim();
+            const meaning = document.getElementById('new-meaning').value.trim();
+            const level = document.getElementById('new-level').value;
+
+            if(!hanzi || !pinyin || !meaning) {
+                showCustomMessage("Vui lòng điền đầy đủ Hán tự, Pinyin và ý nghĩa!");
+                return;
+            }
+
+            vocabList.push({ hanzi, pinyin, meaning, level });
+            saveCustomVocab();
+            renderVocabTable();
+
+            document.getElementById('new-hanzi').value = '';
+            document.getElementById('new-pinyin').value = '';
+            document.getElementById('new-meaning').value = '';
+            showCustomMessage("Đã thêm từ vựng mới thành công!");
+        }
+
+        function deleteWord(index) {
+            vocabList.splice(index, 1);
+            saveCustomVocab();
+            renderVocabTable();
+        }
+
+        // Speech synthesis for Chinese pronunciation
+        function playChineseAudio(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function playCurrentAudio() {
+            if(gameState.questions.length > 0) {
+                const currentQ = gameState.questions[gameState.currentQIndex];
+                playChineseAudio(currentQ.hanzi);
+            }
+        }
+
+        function startGame() {
+            const p1 = document.getElementById('p1-name').value.trim() || "Player 1";
+            const p2 = document.getElementById('p2-name').value.trim() || "Player 2";
+            const mode = document.getElementById('game-mode').value;
+            const level = document.getElementById('vocab-level').value;
+            const totalQ = parseInt(document.getElementById('question-count').value);
+
+            // Filter vocabulary by lesson level
+            let filtered = level === 'all' ? [...vocabList] : vocabList.filter(v => v.level === level);
+            if(filtered.length < 4) {
+                filtered = [...vocabList]; // fallback if not enough
+            }
+
+            // Shuffle & pick questions
+            filtered.sort(() => Math.random() - 0.5);
+            const selectedQuestions = filtered.slice(0, Math.min(totalQ, filtered.length));
+
+            if(selectedQuestions.length === 0) {
+                showCustomMessage("Chưa có đủ từ vựng trong kho để bắt đầu!");
+                return;
+            }
+
+            // Build questions with options
+            gameState = {
+                p1Name: p1,
+                p2Name: p2,
+                mode: mode,
+                level: level,
+                totalQ: selectedQuestions.length,
+                questions: selectedQuestions.map(q => {
+                    // Generate 3 wrong options
+                    let wrongOptions = vocabList.filter(v => v.meaning !== q.meaning);
+                    wrongOptions.sort(() => Math.random() - 0.5);
+                    let options = [q.meaning, ...wrongOptions.slice(0, 3).map(w => w.meaning)];
+                    options.sort(() => Math.random() - 0.5);
+                    return { ...q, options };
+                }),
+                currentQIndex: 0,
+                activeTurnPlayer: 1,
+                p1Score: 0,
+                p2Score: 0,
+                p1Correct: 0,
+                p1Wrong: 0,
+                p2Correct: 0,
+                p2Wrong: 0,
+                timerInterval: null,
+                timeLeft: 15
+            };
+
+            // Switch Screen
+            document.getElementById('screen-setup').classList.add('hidden');
+            if(mode === 'turn') {
+                document.getElementById('screen-game-turn').classList.remove('hidden');
+                loadTurnQuestion();
+            } else {
+                document.getElementById('screen-game-race').classList.remove('hidden');
+                loadRaceQuestion();
+            }
+        }
+
+        // --- TURN-BASED MODE LOGIC ---
+        function loadTurnQuestion() {
+            clearInterval(gameState.timerInterval);
+            if(gameState.currentQIndex >= gameState.questions.length) {
+                endGame();
+                return;
+            }
+
+            const q = gameState.questions[gameState.currentQIndex];
+            document.getElementById('current-q-num').innerText = gameState.currentQIndex + 1;
+            document.getElementById('total-q-num').innerText = gameState.totalQ;
+            document.getElementById('p1-score-display').innerText = gameState.p1Score;
+            document.getElementById('p2-score-display').innerText = gameState.p2Score;
+            document.getElementById('p1-label-turn').innerText = gameState.p1Name;
+            document.getElementById('p2-label-turn').innerText = gameState.p2Name;
+
+            const nameBadge = document.getElementById('current-player-name');
+            nameBadge.innerText = gameState.activeTurnPlayer === 1 ? gameState.p1Name : gameState.p2Name;
+            
+            const badgeContainer = document.getElementById('turn-indicator-badge');
+            if(gameState.activeTurnPlayer === 1) {
+                badgeContainer.className = "px-3 py-1 bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs font-bold rounded-lg uppercase tracking-wider";
+            } else {
+                badgeContainer.className = "px-3 py-1 bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold rounded-lg uppercase tracking-wider";
+            }
+
+            document.getElementById('question-hanzi').innerText = q.hanzi;
+            document.getElementById('question-pinyin').innerText = q.pinyin;
+
+            // Render options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 bg-slate-800/80 hover:bg-indigo-600/30 border border-slate-700 hover:border-indigo-500 rounded-2xl text-white font-medium text-lg transition text-left flex justify-between items-center group";
+                btn.innerHTML = `<span>${opt}</span><i class="fa-solid fa-chevron-right text-slate-600 group-hover:text-indigo-400 transition"></i>`;
+                btn.onclick = () => handleTurnAnswer(opt, q.meaning, btn);
+                container.appendChild(btn);
+            });
+
+            // Auto play audio
+            playChineseAudio(q.hanzi);
+
+            // Timer
+            gameState.timeLeft = 15;
+            document.getElementById('time-left').innerText = gameState.timeLeft;
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.style.width = '100%';
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('time-left').innerText = gameState.timeLeft;
+                timerBar.style.width = (gameState.timeLeft / 15 * 100) + '%';
+
+                if(gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    handleTurnAnswer("", q.meaning, null); // Time out = wrong
+                }
+            }, 1000);
+        }
+
+        function handleTurnAnswer(selected, correct, btnElement) {
+            clearInterval(gameState.timerInterval);
+            const isCorrect = (selected === correct);
+
+            // Disable all buttons
+            const buttons = document.querySelectorAll('#options-container button');
+            buttons.forEach(b => {
+                b.disabled = true;
+                if(b.innerText.includes(correct)) {
+                    b.classList.add('bg-emerald-600/30', 'border-emerald-500', 'text-emerald-200');
+                } else if(b === btnElement && !isCorrect) {
+                    b.classList.add('bg-rose-600/30', 'border-rose-500', 'text-rose-200');
+                }
+            });
+
+            if(gameState.activeTurnPlayer === 1) {
+                if(isCorrect) {
+                    gameState.p1Score += 10 + gameState.timeLeft;
+                    gameState.p1Correct++;
+                } else {
+                    gameState.p1Wrong++;
+                }
+            } else {
+                if(isCorrect) {
+                    gameState.p2Score += 10 + gameState.timeLeft;
+                    gameState.p2Correct++;
+                } else {
+                    gameState.p2Wrong++;
+                }
+            }
+
+            // Next turn or next question
+            setTimeout(() => {
+                if(gameState.activeTurnPlayer === 1) {
+                    gameState.activeTurnPlayer = 2;
+                    loadTurnQuestion();
+                } else {
+                    gameState.activeTurnPlayer = 1;
+                    gameState.currentQIndex++;
+                    loadTurnQuestion();
+                }
+            }, 1200);
+        }
+
+        // --- RACE MODE LOGIC ---
+        function loadRaceQuestion() {
+            clearInterval(gameState.timerInterval);
+            if(gameState.currentQIndex >= gameState.questions.length) {
+                endGame();
+                return;
+            }
+
+            const q = gameState.questions[gameState.currentQIndex];
+            document.getElementById('race-current-q').innerText = gameState.currentQIndex + 1;
+            document.getElementById('race-total-q').innerText = gameState.totalQ;
+            document.getElementById('race-p1-name').innerText = gameState.p1Name;
+            document.getElementById('race-p2-name').innerText = gameState.p2Name;
+            document.getElementById('race-p1-score').innerText = gameState.p1Score;
+            document.getElementById('race-p2-score').innerText = gameState.p2Score;
+
+            document.getElementById('race-p1-hanzi').innerText = q.hanzi;
+            document.getElementById('race-p1-pinyin').innerText = q.pinyin;
+            document.getElementById('race-p2-hanzi').innerText = q.hanzi;
+            document.getElementById('race-p2-pinyin').innerText = q.pinyin;
+
+            // Render P1 options
+            const p1Container = document.getElementById('race-p1-options');
+            p1Container.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "p-3 bg-slate-800/80 hover:bg-indigo-600/30 border border-slate-700 rounded-xl text-white text-sm font-medium transition text-left";
+                btn.innerText = opt;
+                btn.onclick = () => handleRaceAnswer(1, opt, q.meaning, btn);
+                p1Container.appendChild(btn);
+            });
+
+            // Render P2 options
+            const p2Container = document.getElementById('race-p2-options');
+            p2Container.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "p-3 bg-slate-800/80 hover:bg-rose-600/30 border border-slate-700 rounded-xl text-white text-sm font-medium transition text-left";
+                btn.innerText = opt;
+                btn.onclick = () => handleRaceAnswer(2, opt, q.meaning, btn);
+                p2Container.appendChild(btn);
+            });
+
+            playChineseAudio(q.hanzi);
+
+            // Race Timer
+            gameState.timeLeft = 15;
+            document.getElementById('race-timer').innerText = gameState.timeLeft;
+
+            // Track who has answered in this round
+            window.p1Answered = false;
+            window.p2Answered = false;
+
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('race-timer').innerText = gameState.timeLeft;
+
+                if(gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    if(!window.p1Answered) gameState.p1Wrong++;
+                    if(!window.p2Answered) gameState.p2Wrong++;
+                    gameState.currentQIndex++;
+                    loadRaceQuestion();
+                }
+            }, 1000);
+        }
+
+        function handleRaceAnswer(playerNum, selected, correct, btnElement) {
+            const q = gameState.questions[gameState.currentQIndex];
+            const isCorrect = (selected === correct);
+
+            if(playerNum === 1 && !window.p1Answered) {
+                window.p1Answered = true;
+                if(isCorrect) {
+                    gameState.p1Score += 10 + gameState.timeLeft;
+                    gameState.p1Correct++;
+                    btnElement.classList.add('bg-emerald-600/40', 'border-emerald-500');
+                } else {
+                    gameState.p1Wrong++;
+                    btnElement.classList.add('bg-rose-600/40', 'border-rose-500');
+                }
+                document.getElementById('race-p1-score').innerText = gameState.p1Score;
+            } else if(playerNum === 2 && !window.p2Answered) {
+                window.p2Answered = true;
+                if(isCorrect) {
+                    gameState.p2Score += 10 + gameState.timeLeft;
+                    gameState.p2Correct++;
+                    btnElement.classList.add('bg-emerald-600/40', 'border-emerald-500');
+                } else {
+                    gameState.p2Wrong++;
+                    btnElement.classList.add('bg-rose-600/40', 'border-rose-500');
+                }
+                document.getElementById('race-p2-score').innerText = gameState.p2Score;
+            }
+
+            if(window.p1Answered && window.p2Answered) {
+                clearInterval(gameState.timerInterval);
+                setTimeout(() => {
+                    gameState.currentQIndex++;
+                    loadRaceQuestion();
+                }, 800);
+            }
+        }
+
+        // --- END GAME & RESULTS ---
+        function endGame() {
+            clearInterval(gameState.timerInterval);
+            document.getElementById('screen-game-turn').classList.add('hidden');
+            document.getElementById('screen-game-race').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            document.getElementById('res-p1-name').innerText = gameState.p1Name;
+            document.getElementById('res-p2-name').innerText = gameState.p2Name;
+            document.getElementById('res-p1-score').innerText = gameState.p1Score;
+            document.getElementById('res-p2-score').innerText = gameState.p2Score;
+            document.getElementById('res-p1-correct').innerText = gameState.p1Correct;
+            document.getElementById('res-p1-wrong').innerText = gameState.p1Wrong;
+            document.getElementById('res-p2-correct').innerText = gameState.p2Correct;
+            document.getElementById('res-p2-wrong').innerText = gameState.p2Wrong;
+
+            let winnerText = "";
+            let subtitleText = "";
+            if(gameState.p1Score > gameState.p2Score) {
+                winnerText = `${gameState.p1Name} Giành Chiến Thắng! 🎉`;
+                subtitleText = `Xuất sắc vượt qua đối thủ với cách biệt ${gameState.p1Score - gameState.p2Score} điểm!`;
+            } else if(gameState.p2Score > gameState.p1Score) {
+                winnerText = `${gameState.p2Name} Giành Chiến Thắng! 🎉`;
+                subtitleText = `Bứt phá ngoạn mục và giành vinh quang!`;
+            } else {
+                winnerText = `Trận Đấu Bất Phân Thắng Bại! 🤝`;
+                subtitleText = `Hai đấu thủ có điểm số hoàn toàn ngang ngửa nhau!`;
+            }
+
+            document.getElementById('winner-announcement').innerText = winnerText;
+            document.getElementById('winner-subtitle').innerText = subtitleText;
+
+            confetti({
+                particleCount: 120,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            matchHistory.unshift({
+                date: new Date().toLocaleDateString('vi-VN') + ' ' + new Date().toLocaleTimeString('vi-VN'),
+                p1Name: gameState.p1Name,
+                p2Name: gameState.p2Name,
+                p1Score: gameState.p1Score,
+                p2Score: gameState.p2Score,
+                mode: gameState.mode === 'turn' ? 'Luân phiên' : 'Đồng thời'
+            });
+            if(matchHistory.length > 20) matchHistory.pop();
+            localStorage.setItem('chinese_match_history_456', JSON.stringify(matchHistory));
+        }
+
+        function restartGame() {
+            document.getElementById('screen-result').classList.add('hidden');
+            startGame();
+        }
+
+        function returnToHome() {
+            clearInterval(gameState.timerInterval);
+            document.getElementById('screen-game-turn').classList.add('hidden');
+            document.getElementById('screen-game-race').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-setup').classList.remove('hidden');
+        }
+
+        // Modal Controls
+        function openWordListModal() {
+            document.getElementById('wordlist-modal').classList.remove('hidden');
+        }
+        function closeWordListModal() {
+            document.getElementById('wordlist-modal').classList.add('hidden');
+        }
+        function openStatsModal() {
+            renderHistory();
+            document.getElementById('stats-modal').classList.remove('hidden');
+        }
+        function closeStatsModal() {
+            document.getElementById('stats-modal').classList.add('hidden');
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-container');
+            if(matchHistory.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-500 py-8">Chưa có lịch sử trận đấu nào.</p>`;
+                return;
+            }
+            container.innerHTML = '';
+            matchHistory.forEach(match => {
+                container.innerHTML += `
+                    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-4 space-y-2">
+                        <div class="flex justify-between items-center text-xs text-slate-400">
+                            <span><i class="fa-regular fa-calendar mr-1"></i> ${match.date}</span>
+                            <span class="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded font-medium">${match.mode}</span>
+                        </div>
+                        <div class="flex justify-between items-center font-semibold">
+                            <span class="text-indigo-300">${match.p1Name}: <strong class="text-white text-base">${match.p1Score}</strong></span>
+                            <span class="text-slate-500 text-xs">VS</span>
+                            <span class="text-rose-300">${match.p2Name}: <strong class="text-white text-base">${match.p2Score}</strong></span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function clearHistory() {
+            matchHistory = [];
+            localStorage.removeItem('chinese_match_history_456');
+            renderHistory();
+        }
+
+        function showCustomMessage(msg) {
+            const div = document.createElement('div');
+            div.className = "fixed bottom-5 right-5 bg-indigo-600 text-white px-5 py-3 rounded-2xl shadow-2xl z-50 animate-bounce font-medium text-sm flex items-center space-x-2";
+            div.innerHTML = `<i class="fa-solid fa-bell"></i><span>${msg}</span>`;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
